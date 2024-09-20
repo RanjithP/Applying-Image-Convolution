@@ -1,0 +1,32 @@
+version: '3.8'
+
+services:
+  jn:
+    container_name: jn
+    privileged: true
+    build:
+      context: .
+      args:
+        - NODE_ENV=local
+      dockerfile: Dockerfile
+    network_mode: "host"
+    runtime: nvidia
+    volumes:
+      - "./:/workspace"
+      - "/tmp/.X11-unix:/tmp/.X11-unix:rw"
+      - "//var/run/docker.sock://var/run/docker.sock"
+      - "/etc/localtime:/etc/localtime:ro"
+      - "/sys/firmware/dmi/tables/smbios_entry_point:/sys/firmware/dmi/tables/smbios_entry_point"
+      - "/dev/mem:/dev/mem"
+    environment:
+      - DISPLAY=$DISPLAY
+      - QT_X11_NO_MITSHM=1
+      - ENABLE_ALERTS=TRUE
+      - PRINT_OUT=FALSE
+      - ROOT_DIR=/workspace/SP2023/
+      # - GST_DEBUG=1
+      # - GST_DEBUG_LEVEL=3
+    restart: always
+    command: [ "--ip=0.0.0.0", "--port=8888","--allow-root"]
+    entrypoint: ["jupyter", "notebook",]
+    
